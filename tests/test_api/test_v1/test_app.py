@@ -55,13 +55,6 @@ class TestApp(unittest.TestCase):
         self.app = app_module.app.test_client()
         self.app.testing = True
 
-    def tearDown(self):
-        """Teardown for the test"""
-        @app_module.app.teardown_appcontext
-        def close_session(_=None):
-            storage.close()
-        close_session(None)
-
     def test_app(self):
         """Test for app.py"""
         with app_module.app.app_context():
