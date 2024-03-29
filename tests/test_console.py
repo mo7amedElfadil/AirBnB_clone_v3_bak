@@ -153,7 +153,7 @@ class TestConsole_Base(unittest.TestCase):
 
     def test_help(self):
         """This function tests the expected output of the command help"""
-        cmds = ['EOF', 'all', 'count', 'create', 'destroy', 'drop',
+        cmds = ['EOF', 'all', 'count', 'create', 'destroy', 'drop', 'drop_all',
                 'help', 'quit', 'show', 'update']
         expected = ("Documented commands (type help <topic>):\n",
                     "========================================\n",
@@ -1724,6 +1724,14 @@ class Test_count(unittest.TestCase):
             os.remove(models.FileStorage._FileStorage__file_path)
         except FileNotFoundError:
             pass
+
+    def tearDown(self):
+        """removes files created and resets the value of __objects"""
+        try:
+            os.remove("file.json")
+        except IOError:
+            pass
+        models.storage.all().clear()
 
     def test_count_zero(self):
         '''Test there's number of counting instances printed'''

@@ -11,6 +11,7 @@ import inspect
 import pycodestyle as pep8
 import models.amenity as amenity_model
 from models import db
+from models import storage
 
 
 class TestAmenityDocPep8(unittest.TestCase):

@@ -19,8 +19,8 @@ class FileStorage:
     def all(self, cls=None):
         '''Returns the dictionary `__objects`'''
         if not cls:
-            return FileStorage.__objects
-        return {k: v for k, v in FileStorage.__objects.items()
+            return self.__objects
+        return {k: v for k, v in self.__objects.items()
                 if isinstance(v, cls)}
 
     def new(self, obj):
@@ -28,19 +28,19 @@ class FileStorage:
         if not obj:
             return
         key = obj.__class__.__name__ + '.' + obj.id
-        FileStorage.__objects[key] = obj
+        self.__objects[key] = obj
 
     def save(self):
         '''Serializes __objects to the JSON file'''
 
-        with open(FileStorage.__file_path, 'w', encoding='utf-8') as file:
-            file.write(dumps(FileStorage.__objects,
+        with open(self.__file_path, 'w', encoding='utf-8') as file:
+            file.write(dumps(self.__objects,
                              default=lambda obj: obj.to_dict()))
 
     def reload(self):
         '''Deserializes the JSON file to __objects'''
         try:
-            with open(FileStorage.__file_path, 'r', encoding='utf-8') as file:
+            with open(self.__file_path, 'r', encoding='utf-8') as file:
                 from models.base_model import BaseModel
                 from models.user import User
                 from models.amenity import Amenity
@@ -56,7 +56,7 @@ class FileStorage:
                         'State': State
                       }
                 for k, v in loads(file.read()).items():
-                    FileStorage.__objects[k] = cls[v['__class__']](**v)
+                    self.__objects[k] = cls[v['__class__']](**v)
         except Exception:
             pass
 
@@ -65,8 +65,8 @@ class FileStorage:
         if not obj:
             return
         key = f"{obj.__class__.__name__}.{obj.id}"
-        if key in FileStorage.__objects:
-            del FileStorage.__objects[key]
+        if key in self.__objects:
+            del self.__objects[key]
             self.save()
 
     def close(self):
@@ -74,3 +74,23 @@ class FileStorage:
         Call reload method for deserializing the JSON file to objects
         """
         self.reload()
+
+    def get(self, cls, id):
+        """
+        Get an object by class and id
+        """
+        if cls is None or id is None:
+            return None
+        key = f"{cls.__name__}.{id}"
+        obj = self.__objects.get(key)
+        if obj:
+            return obj
+        return None
+
+    def count(self, cls=None):
+        """
+        Count the number of objects in storage
+        """
+        if cls is None:
+            return len(self.all())
+        return len(self.all(cls))
