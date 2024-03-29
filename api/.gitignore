@@ -1,0 +1,10 @@
+*
+!/*.py
+!/.gitignore
+!/README.md
+!/LICENSE
+*main.py
+!/v1/
+!/v1/*
+!/v1/views/
+!/v1/views/*
