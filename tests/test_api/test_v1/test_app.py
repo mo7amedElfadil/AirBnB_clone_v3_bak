@@ -55,12 +55,16 @@ class TestApp(unittest.TestCase):
         self.app = app_module.app.test_client()
         self.app.testing = True
 
-    def test_app(self):
-        """Test for app.py"""
+    def test_app_status(self):
+        """Test for app.py status"""
         with app_module.app.app_context():
             response = self.app.get('/api/v1/status')
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.data, b'{"status":"OK"}\n')
+
+    def test_app_stats(self):
+        """Test for app.py stats"""
+        with app_module.app.app_context():
             response = self.app.get('/api/v1/stats')
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.data,
@@ -71,3 +75,10 @@ class TestApp(unittest.TestCase):
                                       "reviews": storage.count(Review),
                                       "amenities":
                                       storage.count(Amenity)}).data)
+
+    def test_app_404(self):
+        """Test for app.py 404"""
+        with app_module.app.app_context():
+            response = self.app.get('/api/v1/404')
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.data, b'{"error":"Not found"}\n')
