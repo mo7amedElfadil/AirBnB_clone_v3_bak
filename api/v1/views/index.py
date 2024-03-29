@@ -1,4 +1,10 @@
 #!/usr/bin/python3
+"""
+index: defining a blueprint view for two routes:
+    /status: returns the status of the API
+    /stats: returns the staticstis of the different entities
+"""
+
 from api.v1.views import app_views
 from flask import jsonify
 
