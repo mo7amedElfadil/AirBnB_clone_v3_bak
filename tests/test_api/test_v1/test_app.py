@@ -7,6 +7,14 @@ import os
 import inspect
 import pycodestyle as pep8
 import api.v1.app as app_module
+from flask import Flask, jsonify, request, make_response, abort
+from models import storage
+from models.state import State
+from models.city import City
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
 
 
 class TestAppDocPep8(unittest.TestCase):
@@ -37,3 +45,36 @@ class TestAppDocPep8(unittest.TestCase):
         base_funcs.extend(inspect.getmembers(app_module, inspect.ismethod))
         for func in base_funcs:
             self.assertTrue(len(str(func[1].__doc__)) > 0)
+
+
+class TestApp(unittest.TestCase):
+    """unittest class for app.py"""
+
+    def setUp(self):
+        """Setup for the test"""
+        self.app = app_module.app.test_client()
+        self.app.testing = True
+
+    def tearDown(self):
+        """Teardown for the test"""
+        @app_module.app.teardown_appcontext
+        def close_session(_=None):
+            storage.close()
+        close_session(None)
+
+    def test_app(self):
+        """Test for app.py"""
+        with app_module.app.app_context():
+            response = self.app.get('/api/v1/status')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, b'{"status":"OK"}\n')
+            response = self.app.get('/api/v1/stats')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data,
+                             jsonify({"states": storage.count(State),
+                                      "cities": storage.count(City),
+                                      "users": storage.count(User),
+                                      "places": storage.count(Place),
+                                      "reviews": storage.count(Review),
+                                      "amenities":
+                                      storage.count(Amenity)}).data)

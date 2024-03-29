@@ -6,10 +6,19 @@ import unittest
 import os
 import inspect
 import pycodestyle as pep8
+from api.v1.app import app
 import api.v1.views.index as index_module
+from flask import jsonify
+from models import storage
+from models.state import State
+from models.city import City
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
 
 
-class TestBaseModelDocPep8(unittest.TestCase):
+class TestIndexDocPep8(unittest.TestCase):
     """unittest class for FileStorage class
     documentation and pep8 conformaty"""
     def test_pep8_base(self):
@@ -38,3 +47,29 @@ class TestBaseModelDocPep8(unittest.TestCase):
         base_funcs.extend(inspect.getmembers(index_module, inspect.ismethod))
         for func in base_funcs:
             self.assertTrue(len(str(func[1].__doc__)) > 0)
+
+
+class TestIndex(unittest.TestCase):
+    """unittest class for index.py"""
+
+    def setUp(self):
+        """Setup for the test"""
+        self.app = app.test_client()
+        self.app.testing = True
+
+    def test_index(self):
+        """Test for app.py"""
+        with app.app_context():
+            response = self.app.get('/api/v1/status')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, b'{"status":"OK"}\n')
+            response = self.app.get('/api/v1/stats')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data,
+                             jsonify({"states": storage.count(State),
+                                      "cities": storage.count(City),
+                                      "users": storage.count(User),
+                                      "places": storage.count(Place),
+                                      "reviews": storage.count(Review),
+                                      "amenities":
+                                      storage.count(Amenity)}).data)
