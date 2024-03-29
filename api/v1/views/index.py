@@ -4,30 +4,30 @@ index: defining a blueprint view for two routes:
     /status: returns the status of the API
     /stats: returns the staticstis of the different entities
 """
-
-from api.v1.views import app_views
 from flask import jsonify
+from api.v1.views import app_views
+from models import storage
+from models.state import State
+from models.city import City
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
 
 
-@app_views.route('/status', methods=['GET'], strict_slashes=False)
+@app_views.route('/status', strict_slashes=False, methods=['GET'])
 def status():
     """Return status OK"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+@app_views.route('/stats', strict_slashes=False, methods=['GET'])
 def stats():
     """Return stats"""
-    from models import storage
-    from models.state import State
-    from models.city import City
-    from models.user import User
-    from models.place import Place
-    from models.review import Review
-    from models.amenity import Amenity
-    return jsonify({"states": storage.count(State),
+    return jsonify({"amenities": storage.count(Amenity),
                     "cities": storage.count(City),
-                    "users": storage.count(User),
                     "places": storage.count(Place),
                     "reviews": storage.count(Review),
-                    "amenities": storage.count(Amenity)})
+                    "states": storage.count(State),
+                    "users": storage.count(User),
+                    })
