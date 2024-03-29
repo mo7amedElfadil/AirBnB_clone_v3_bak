@@ -90,7 +90,8 @@ class Test_creating_objs(unittest.TestCase):
             os.remove("file.json")
         except IOError:
             pass
-        FileStorage._FileStorage__objects = {}
+        models.storage.__objects = {}
+        models.storage.all().clear()
 
     def tearDown(self):
         """removes files created and resets the value of __objects"""
@@ -98,7 +99,7 @@ class Test_creating_objs(unittest.TestCase):
             os.remove("file.json")
         except IOError:
             pass
-        FileStorage._FileStorage__objects = {}
+        models.storage.all().clear()
 
     def test_obj(self):
         """This function tests the contents of __objects and
@@ -236,6 +237,28 @@ class Test_creating_objs(unittest.TestCase):
         """This function tests the method reload with no arguments"""
         with self.assertRaises(TypeError):
             models.storage.reload("args")
+
+    def test_get(self):
+        """This function tests the get method"""
+        base = BaseModel()
+        base.save()
+        obj = models.storage.get(BaseModel, base.id)
+        self.assertEqual(obj, base)
+
+    def test_count(self):
+        """This function tests the count method"""
+        base = BaseModel()
+        base.save()
+        count = models.storage.count()
+        self.assertEqual(count, 1)
+        base2 = BaseModel()
+        base2.save()
+        count = models.storage.count()
+        self.assertEqual(count, 2)
+        count = models.storage.count(BaseModel)
+        self.assertEqual(count, 2)
+        count = models.storage.count(User)
+        self.assertEqual(count, 0)
 
 
 if __name__ == '__main__':

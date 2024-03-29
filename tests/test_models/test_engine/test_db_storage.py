@@ -169,6 +169,20 @@ class TestDBStorage(unittest.TestCase):
         self.assertIsInstance(all_objs, dict)
         self.assertEqual(len(all_objs), len(self.instances))
 
+    def test_get(self):
+        """Test the get method"""
+        state = self.storage.get(State, self.instances['State'].id)
+        self.assertEqual(state, self.instances['State'])
+
+    def test_count(self):
+        """Test the count method"""
+        count = self.storage.count(State)
+        self.assertEqual(count, len([state for state in
+                                     self.instances.values()
+                                     if isinstance(state, State)]))
+        count = self.storage.count()
+        self.assertEqual(count, len(self.instances))
+
 
 @unittest.skipIf(not db, "db")
 class TestDBStorageRelations(unittest.TestCase):

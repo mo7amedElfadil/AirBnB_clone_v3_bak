@@ -14,6 +14,7 @@ import inspect
 import pycodestyle as pep8
 import models.place as place_model
 from models import db
+from models import storage
 
 
 class TestPlaceDocPep8(unittest.TestCase):
@@ -129,7 +130,7 @@ class Test_Place(unittest.TestCase):
         rev.save()
         curr_date = rev.updated_at
         self.assertIn('Place'+'.'+rev.id,
-                      models.FileStorage._FileStorage__objects)
+                      storage.all(Place).keys())
         self.assertNotEqual(prev_date.isoformat(), curr_date.isoformat())
         with self.assertRaises(TypeError):
             rev.save('')

@@ -107,8 +107,9 @@ class Test_City(unittest.TestCase):
         prev_date = rev.updated_at
         rev.save()
         curr_date = rev.updated_at
+
         self.assertIn('City'+'.'+rev.id,
-                      models.FileStorage._FileStorage__objects)
+                      models.storage.all(City).keys())
         self.assertNotEqual(prev_date.isoformat(), curr_date.isoformat())
         with self.assertRaises(TypeError):
             rev.save('')

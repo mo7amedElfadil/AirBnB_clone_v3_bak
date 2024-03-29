@@ -14,6 +14,7 @@ import inspect
 import pycodestyle as pep8
 import models.review as review_model
 from models import db
+from models import storage
 
 
 class TestReviewDocPep8(unittest.TestCase):
@@ -110,7 +111,7 @@ class Test_Review(unittest.TestCase):
         rev.save()
         curr_date = rev.updated_at
         self.assertIn('Review'+'.'+rev.id,
-                      models.FileStorage._FileStorage__objects)
+                      storage.all(Review).keys())
         self.assertNotEqual(prev_date.isoformat(), curr_date.isoformat())
         with self.assertRaises(TypeError):
             rev.save('')
