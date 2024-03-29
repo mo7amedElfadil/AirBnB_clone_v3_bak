@@ -2,11 +2,8 @@
 """
 Unittest for the DBStorage Class
 """
-
 import unittest
-import datetime
 import os
-import models
 from models.engine import db_storage
 from models.engine.db_storage import DBStorage
 import inspect
