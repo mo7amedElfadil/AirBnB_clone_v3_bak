@@ -8,75 +8,72 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, request
-from flask_restful import Api, Resource, abort
+from flask import abort, jsonify, request
 from models import storage
 from models.user import User
-
-api = Api(app_views)
 
 
 def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
-        abort(404, error="Not Found")
+        abort(404)
 
 
-class UserNoId(Resource):
-    """
-    This is an API resource for the Users object
-    for the route: /api/v1/users
-    """
-    def get(self):
-        """Returns a list of users"""
-        return [value.to_dict() for value in storage.all(User).values()]
-
-    def post(self):
-        """Adds a new instance of User into the dataset"""
-        args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        if not args.get('email'):
-            abort(400, message="Missing email")
-        if not args.get('password'):
-            abort(400, message="Missing password")
-        new_user = User(**args)
-        new_user.save()
-        return new_user.to_dict(), 201
+@app_views.route('/users', strict_slashes=False,
+                 methods=['GET'])
+def get_users():
+    """Returns a list of users"""
+    return jsonify([value.to_dict() for value in
+                    storage.all(User).values()])
 
 
-class UserApiId(Resource):
-    """
-    This is an API resource for the Users object
-    for the route: /api/v1/users/<user_id>
-    """
-    def get(self, user_id):
-        """Returns a user with the specific id"""
-        result = storage.get(User, user_id)
-        error_404(result)
-        return result.to_dict()
-
-    def delete(self, user_id):
-        """Deletes an instance of user with the specific id"""
-        result = storage.get(User, user_id)
-        error_404(result)
-        storage.delete(result)
-        storage.save()
-        return {}, 200
-
-    def put(self, user_id):
-        """Updates an instance of the user entities"""
-        result = storage.get(User, user_id)
-        error_404(result)
-        args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        for k, v in args.items():
-            if k not in ['id', 'email', 'created_at', 'updated_at']:
-                setattr(result, k, v)
-        result.save()
-        return result.to_dict(), 200
+@app_views.route('/users', strict_slashes=False,
+                 methods=['POST'])
+def post_user():
+    """Adds a new instance of User into the dataset"""
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, description="Not a JSON")
+    if not args.get('email'):
+        abort(400, description="Missing email")
+    if not args.get('password'):
+        abort(400, description="Missing password")
+    new_user = User(**args)
+    new_user.save()
+    return jsonify(new_user.to_dict()), 201
 
 
-api.add_resource(UserNoId, "/users")
-api.add_resource(UserApiId, "/users/<user_id>")
+@app_views.route('/users/<user_id>', strict_slashes=False,
+                 methods=['GET'])
+def get_user(user_id):
+    """Returns a user with the specific id"""
+    result = storage.get(User, user_id)
+    error_404(result)
+    return jsonify(result.to_dict())
+
+
+@app_views.route('/users/<user_id>', strict_slashes=False,
+                 methods=['DELETE'])
+def delete_user(user_id):
+    """Deletes an instance of user with the specific id"""
+    result = storage.get(User, user_id)
+    error_404(result)
+    storage.delete(result)
+    storage.save()
+    return jsonify({}), 200
+
+
+@app_views.route('/users/<user_id>', strict_slashes=False,
+                 methods=['PUT'])
+def put_user(user_id):
+    """Updates an instance of the user entities"""
+    result = storage.get(User, user_id)
+    error_404(result)
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, description="Not a JSON")
+    for k, v in args.items():
+        if k not in ['id', 'email', 'created_at', 'updated_at']:
+            setattr(result, k, v)
+    result.save()
+    return jsonify(result.to_dict()), 200

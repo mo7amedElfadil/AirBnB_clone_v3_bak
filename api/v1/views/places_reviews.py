@@ -14,7 +14,6 @@ from models import storage
 from models.review import Review
 from models.place import Place
 from models.user import User
-from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
@@ -58,9 +57,8 @@ def post_new_review(place_id):
     """Adds a new instance of Review into the dataset"""
     result = storage.get(Place, place_id)
     error_404(result)
-    try:
-        args = request.get_json()
-    except BadRequest as e:
+    args = request.get_json(silent=True)
+    if not args:
         abort(400, description="Not a JSON")
     if not args.get("user_id"):
         abort(400, description="Missing user_id")
@@ -79,9 +77,8 @@ def put_review(review_id):
     """Updates an instance of the review entities"""
     result = storage.get(Review, review_id)
     error_404(result)
-    try:
-        args = request.get_json()
-    except BadRequest as e:
+    args = request.get_json(silent=True)
+    if not args:
         abort(400, description="Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
