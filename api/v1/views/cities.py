@@ -48,7 +48,7 @@ def put_city(city_id):
     """Updates an instance of the city entities"""
     result = storage.get(City, city_id)
     error_404(result)
-    args = request.get_json()
+    args = request.get_json(silent=True)
     if not args:
         abort(400, "Not a JSON")
     for k, v in args.items():
@@ -71,7 +71,7 @@ def get_cities(state_id):
                  methods=['POST'])
 def post_new_city(state_id):
     """Adds a new instance of City into the dataset"""
-    args = request.get_json()
+    args = request.get_json(silent=True)
     if not args:
         abort(400, "Not a JSON")
     if not args.get('name'):

@@ -59,13 +59,13 @@ def post_new_review(place_id):
     error_404(result)
     args = request.get_json(silent=True)
     if not args:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
     if not args.get("user_id"):
-        abort(400, description="Missing user_id")
+        abort(400, "Missing user_id")
     if not storage.get(User, args['user_id']):
         abort(404)
     if not args.get("text"):
-        abort(400, description="Missing text")
+        abort(400, "Missing text")
     new_review = Review(**args)
     new_review.save()
     return jsonify(new_review.to_dict()), 201
@@ -79,7 +79,7 @@ def put_review(review_id):
     error_404(result)
     args = request.get_json(silent=True)
     if not args:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
