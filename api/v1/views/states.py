@@ -24,7 +24,7 @@ def error_404(result):
                  methods=['GET'])
 def get_states():
     """Returns a list of states"""
-    return [value.to_dict() for value in storage.all(State).values()]
+    return jsonify([value.to_dict() for value in storage.all(State).values()])
 
 
 @app_views.route('/states', strict_slashes=False,
@@ -39,7 +39,7 @@ def post_states():
         abort(400, description="Missing name")
     new_state = State(**args)
     new_state.save()
-    return new_state.to_dict(), 201
+    return jsonify(new_state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -48,7 +48,7 @@ def get_state(state_id):
     """Returns a state with the specific id"""
     result = storage.get(State, state_id)
     error_404(result)
-    return result.to_dict()
+    return jsonify(result.to_dict())
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -59,7 +59,7 @@ def delete_state(state_id):
     error_404(result)
     storage.delete(result)
     storage.save()
-    return {}, 200
+    return jsonify({}), 200
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -76,4 +76,4 @@ def put_state(state_id):
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
     result.save()
-    return result.to_dict(), 200
+    return jsonify(result.to_dict()), 200
