@@ -9,79 +9,78 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, request
-from flask_restful import Api, Resource, abort
+from flask import abort, jsonify, request
 from models import storage
 from models.city import City
 from models.state import State
-
-api = Api(app_views)
+from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
-        abort(404, error="Not Found")
+        abort(404)
 
 
-class CityRes(Resource):
-    """
-    This is an API resource for the City object
-    for the route: /cities/<city_id>
-    """
-    def get(self, city_id):
-        """Returns an instance of city"""
-        result = storage.get(City, city_id)
-        error_404(result)
-        return result.to_dict()
+@app_views.route('/cities/<city_id>', strict_slashes=False,
+                 methods=['GET'])
+def get_city(city_id):
+    """Returns an instance of city"""
+    result = storage.get(City, city_id)
+    error_404(result)
+    return jsonify(result.to_dict())
 
-    def delete(self, city_id):
-        """Deletes an instance of city with the specific id"""
-        result = storage.get(City, city_id)
-        error_404(result)
-        storage.delete(result)
-        storage.save()
-        return {}, 200
 
-    def put(self, city_id):
-        """Updates an instance of the city entities"""
-        result = storage.get(City, city_id)
-        error_404(result)
+@app_views.route('/cities/<city_id>', strict_slashes=False,
+                 methods=['DELETE'])
+def delete_city(city_id):
+    """Deletes an instance of city with the specific id"""
+    result = storage.get(City, city_id)
+    error_404(result)
+    storage.delete(result)
+    storage.save()
+    return jsonify({}), 200
+
+
+@app_views.route('/cities/<city_id>', strict_slashes=False,
+                 methods=['PUT'])
+def put_city(city_id):
+    """Updates an instance of the city entities"""
+    result = storage.get(City, city_id)
+    error_404(result)
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        for k, v in args.items():
-            if k not in ['id', 'created_at', 'updated_at']:
-                setattr(result, k, v)
-        result.save()
-        return result.to_dict(), 200
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    for k, v in args.items():
+        if k not in ['id', 'created_at', 'updated_at']:
+            setattr(result, k, v)
+    result.save()
+    return jsonify(result.to_dict()), 200
 
 
-class CityStateRes(Resource):
-    """
-    This is an API resource for the City object
-    for the route: /states/<state_id>/cities
-    """
-    def get(self, state_id):
-        """Returns a list of cities with the specific state id"""
-        result = storage.get(State, state_id)
-        error_404(result)
-        return [value.to_dict() for value in result.cities]
+@app_views.route('/states/<state_id>/cities', strict_slashes=False,
+                 methods=['GET'])
+def get_cities(state_id):
+    """Returns a list of cities with the specific state id"""
+    result = storage.get(State, state_id)
+    error_404(result)
+    return jsonify([value.to_dict() for value in result.cities])
 
-    def post(self, state_id):
-        """Adds a new instance of City into the dataset"""
+
+@app_views.route('/states/<state_id>/cities', strict_slashes=False,
+                 methods=['POST'])
+def post_new_city(state_id):
+    """Adds a new instance of City into the dataset"""
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        if not args.get('name'):
-            abort(400, message="Missing name")
-        result = storage.get(State, state_id)
-        error_404(result)
-        args['state_id'] = state_id
-        new_city = City(**args)
-        new_city.save()
-        return new_city.to_dict(), 201
-
-
-api.add_resource(CityStateRes, "/states/<state_id>/cities")
-api.add_resource(CityRes, "/cities/<city_id>")
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    if not args.get('name'):
+        abort(400, description="Missing name")
+    result = storage.get(State, state_id)
+    error_404(result)
+    args['state_id'] = state_id
+    new_city = City(**args)
+    new_city.save()
+    return jsonify(new_city.to_dict()), 201

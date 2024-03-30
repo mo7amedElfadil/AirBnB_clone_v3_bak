@@ -8,75 +8,74 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, request
-from flask_restful import Api, Resource, abort
+from flask import abort, jsonify, request
 from models import storage
 from models.amenity import Amenity
-
-api = Api(app_views)
+from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
-        abort(404, error="Not Found")
+        abort(404)
 
 
-class AmenityIdRes(Resource):
-    """
-    This is an API resource for the Amenity object
-    for the route: /amenities/<amenity_id>
-    """
-    def get(self, amenity_id):
-        """Returns an instance of amenity"""
-        result = storage.get(Amenity, amenity_id)
-        error_404(result)
-        return result.to_dict()
+@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
+                 methods=['GET'])
+def get_amenity(amenity_id):
+    """Returns an instance of amenity"""
+    result = storage.get(Amenity, amenity_id)
+    error_404(result)
+    return jsonify(result.to_dict())
 
-    def delete(self, amenity_id):
-        """Deletes an instance of amenity with the specific id"""
-        result = storage.get(Amenity, amenity_id)
-        error_404(result)
-        storage.delete(result)
-        storage.save()
-        return {}, 200
 
-    def put(self, amenity_id):
-        """Updates an instance of the amenity entities"""
-        result = storage.get(Amenity, amenity_id)
-        error_404(result)
+@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
+                 methods=['DELETE'])
+def delete_amenity(amenity_id):
+    """Deletes an instance of amenity with the specific id"""
+    result = storage.get(Amenity, amenity_id)
+    error_404(result)
+    storage.delete(result)
+    storage.save()
+    return jsonify({}), 200
+
+
+@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
+                 methods=['PUT'])
+def put_amenity(amenity_id):
+    """Updates an instance of the amenity entities"""
+    result = storage.get(Amenity, amenity_id)
+    error_404(result)
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        for k, v in args.items():
-            if k not in ['id', 'created_at', 'updated_at']:
-                setattr(result, k, v)
-        result.save()
-        return result.to_dict(), 200
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    for k, v in args.items():
+        if k not in ['id', 'created_at', 'updated_at']:
+            setattr(result, k, v)
+    result.save()
+    return jsonify(result.to_dict()), 200
 
 
-class AmenityRes(Resource):
-    """
-    This is an API resource for the Amenity object
-    for the route: /amenities
-    """
-    def get(self):
-        """Returns a list of all amenities"""
-        result = storage.all(Amenity)
-        error_404(result)
-        return [value.to_dict() for value in result.values()]
+@app_views.route('/amenities', strict_slashes=False,
+                 methods=['GET'])
+def get_all_amenities():
+    """Returns a list of all amenities"""
+    result = storage.all(Amenity)
+    error_404(result)
+    return jsonify([value.to_dict() for value in result.values()])
 
-    def post(self):
-        """Adds a new instance of Amenity into the dataset"""
+
+@app_views.route('/amenities', strict_slashes=False,
+                 methods=['POST'])
+def post_new_amenity():
+    """Adds a new instance of Amenity into the dataset"""
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        if not args.get('name'):
-            abort(400, message="Missing name")
-        new_amenity = Amenity(**args)
-        new_amenity.save()
-        return new_amenity.to_dict(), 201
-
-
-api.add_resource(AmenityIdRes, "/amenities/<amenity_id>")
-api.add_resource(AmenityRes, "/amenities")
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    if not args.get('name'):
+        abort(400, description="Missing name")
+    new_amenity = Amenity(**args)
+    new_amenity.save()
+    return jsonify(new_amenity.to_dict()), 201
