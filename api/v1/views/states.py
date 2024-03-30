@@ -31,12 +31,11 @@ def get_states():
                  methods=['POST'])
 def post_states():
     """Adds a new instance of State into the dataset"""
-    try:
-        args = request.get_json()
-    except BadRequest as e:
-        abort(400, description="Not a JSON")
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, "Not a JSON")
     if not args.get('name'):
-        abort(400, description="Missing name")
+        abort(400, "Missing name")
     new_state = State(**args)
     new_state.save()
     return jsonify(new_state.to_dict()), 201
@@ -68,10 +67,9 @@ def put_state(state_id):
     """Updates an instance of the state entities"""
     result = storage.get(State, state_id)
     error_404(result)
-    try:
-        args = request.get_json()
-    except BadRequest as e:
-        abort(400, description="Not a JSON")
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, "Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
