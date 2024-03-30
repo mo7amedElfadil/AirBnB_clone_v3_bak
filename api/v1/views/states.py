@@ -8,7 +8,7 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import abort, jsonify, request
+from flask import abort, jsonify, make_response, request
 from models import storage
 from models.state import State
 from werkzeug.exceptions import BadRequest
@@ -39,7 +39,7 @@ def post_states():
         abort(400, description="Missing name")
     new_state = State(**args)
     new_state.save()
-    return jsonify(new_state.to_dict()), 201
+    return make_response(jsonify(new_state.to_dict()), 201)
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -59,7 +59,7 @@ def delete_state(state_id):
     error_404(result)
     storage.delete(result)
     storage.save()
-    return jsonify({}), 200
+    return make_response(jsonify({}), 200)
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -76,4 +76,4 @@ def put_state(state_id):
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
     result.save()
-    return jsonify(result.to_dict()), 200
+    return make_response(jsonify(result.to_dict()), 200)
