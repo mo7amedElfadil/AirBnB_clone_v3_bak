@@ -3,7 +3,7 @@
 Flask web api
 """
 from os import getenv
-from flask import Flask, jsonify
+from flask import Flask
 from models import storage
 from api.v1.views import app_views
 from flask_cors import CORS
@@ -24,7 +24,7 @@ def close_storage(_):
 @app.errorhandler(404)
 def not_found(error):
     """Return 404 error"""
-    return jsonify({"error": "Not found"}), 404
+    return {"error": "Not found"}, 404
 
 
 if __name__ == "__main__":

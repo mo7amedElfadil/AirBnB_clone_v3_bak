@@ -8,73 +8,72 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, request
-from flask_restful import Api, Resource, abort
+from flask import abort, jsonify, request
 from models import storage
 from models.state import State
-
-api = Api(app_views)
+from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
-        abort(404, error="Not Found")
+        abort(404)
 
 
-class StateNoId(Resource):
-    """
-    This is an API resource for the States object
-    for the route: /api/v1/states
-    """
-    def get(self):
-        """Returns a list of states"""
-        return [value.to_dict() for value in storage.all(State).values()]
+@app_views.route('/states', strict_slashes=False,
+                 methods=['GET'])
+def get_states():
+    """Returns a list of states"""
+    return jsonify([value.to_dict() for value in storage.all(State).values()])
 
-    def post(self):
-        """Adds a new instance of State into the dataset"""
+
+@app_views.route('/states', strict_slashes=False,
+                 methods=['POST'])
+def post_states():
+    """Adds a new instance of State into the dataset"""
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        if not args.get('name'):
-            abort(400, message="Missing name")
-        new_state = State(**args)
-        new_state.save()
-        return new_state.to_dict(), 201
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    if not args.get('name'):
+        abort(400, description="Missing name")
+    new_state = State(**args)
+    new_state.save()
+    return jsonify(new_state.to_dict()), 201
 
 
-class StateApiId(Resource):
-    """
-    This is an API resource for the States object
-    for the route: /api/v1/states/<state_id>
-    """
-    def get(self, state_id):
-        """Returns a state with the specific id"""
-        result = storage.get(State, state_id)
-        error_404(result)
-        return result.to_dict()
+@app_views.route('/states/<state_id>', strict_slashes=False,
+                 methods=['GET'])
+def get_state(state_id):
+    """Returns a state with the specific id"""
+    result = storage.get(State, state_id)
+    error_404(result)
+    return jsonify(result.to_dict())
 
-    def delete(self, state_id):
-        """Deletes an instance of state with the specific id"""
-        result = storage.get(State, state_id)
-        error_404(result)
-        storage.delete(result)
-        storage.save()
-        return {}, 200
 
-    def put(self, state_id):
-        """Updates an instance of the state entities"""
-        result = storage.get(State, state_id)
-        error_404(result)
+@app_views.route('/states/<state_id>', strict_slashes=False,
+                 methods=['DELETE'])
+def delete_state(state_id):
+    """Deletes an instance of state with the specific id"""
+    result = storage.get(State, state_id)
+    error_404(result)
+    storage.delete(result)
+    storage.save()
+    return jsonify({}), 200
+
+
+@app_views.route('/states/<state_id>', strict_slashes=False,
+                 methods=['PUT'])
+def put_state(state_id):
+    """Updates an instance of the state entities"""
+    result = storage.get(State, state_id)
+    error_404(result)
+    try:
         args = request.get_json()
-        if not args:
-            abort(400, message="Not a JSON")
-        for k, v in args.items():
-            if k not in ['id', 'created_at', 'updated_at']:
-                setattr(result, k, v)
-        result.save()
-        return result.to_dict(), 200
-
-
-api.add_resource(StateNoId, "/states")
-api.add_resource(StateApiId, "/states/<state_id>")
+    except BadRequest as e:
+        abort(400, description="Not a JSON")
+    for k, v in args.items():
+        if k not in ['id', 'created_at', 'updated_at']:
+            setattr(result, k, v)
+    result.save()
+    return jsonify(result.to_dict()), 200
