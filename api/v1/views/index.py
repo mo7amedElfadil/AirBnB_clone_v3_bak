@@ -4,15 +4,15 @@ index: defining a blueprint view for two routes:
     /status: returns the status of the API
     /stats: returns the staticstis of the different entities
 """
-from flask import jsonify
 from api.v1.views import app_views
+from flask import jsonify
 from models import storage
-from models.state import State
+from models.amenity import Amenity
 from models.city import City
-from models.user import User
 from models.place import Place
 from models.review import Review
-from models.amenity import Amenity
+from models.state import State
+from models.user import User
 
 
 @app_views.route('/status', strict_slashes=False, methods=['GET'])
