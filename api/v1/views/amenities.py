@@ -11,7 +11,6 @@ from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models import storage
 from models.amenity import Amenity
-from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
@@ -46,10 +45,9 @@ def put_amenity(amenity_id):
     """Updates an instance of the amenity entities"""
     result = storage.get(Amenity, amenity_id)
     error_404(result)
-    try:
-        args = request.get_json()
-    except BadRequest as e:
-        abort(400, description="Not a JSON")
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, "Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
@@ -70,12 +68,11 @@ def get_all_amenities():
                  methods=['POST'])
 def post_new_amenity():
     """Adds a new instance of Amenity into the dataset"""
-    try:
-        args = request.get_json()
-    except BadRequest as e:
-        abort(400, description="Not a JSON")
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, "Not a JSON")
     if not args.get('name'):
-        abort(400, description="Missing name")
+        abort(400, "Missing name")
     new_amenity = Amenity(**args)
     new_amenity.save()
     return jsonify(new_amenity.to_dict()), 201
