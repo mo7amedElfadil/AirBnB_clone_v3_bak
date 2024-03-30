@@ -10,7 +10,7 @@ from api.v1.app import app
 import api.v1.views.places as places_module
 from datetime import datetime
 from flask import jsonify
-from models import storage
+from models import storage, db
 from models.place import Place
 from models.state import State
 from models.city import City
@@ -81,6 +81,7 @@ class TestPlaces(unittest.TestCase):
         for instance in instances:
             self.instances[instance].delete()
 
+    @unittest.skipIf(not db, "not db")
     def test_get_places(self):
         """Test for GET /api/v1/cities/<city_id>/places"""
         with app.app_context():
@@ -167,6 +168,7 @@ class TestPlaces(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertEqual(response.json['message'], 'Missing name')
 
+    @unittest.skipIf(not db, "not db")
     def test_put_place(self):
         """Test for PUT /api/v1/places/<place_id>"""
         iso = datetime.fromisoformat

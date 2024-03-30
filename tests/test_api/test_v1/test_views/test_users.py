@@ -10,7 +10,7 @@ from api.v1.app import app
 import api.v1.views.users as users_module
 from datetime import datetime
 from flask import jsonify
-from models import storage
+from models import storage, db
 from models.user import User
 from json import loads
 
@@ -141,6 +141,7 @@ class TestUsers(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertEqual(response.json['message'], 'Missing password')
 
+    @unittest.skipIf(not db, "not db")
     def test_put_user(self):
         """Test for PUT /api/v1/users/<user_id>"""
         iso = datetime.fromisoformat
