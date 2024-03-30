@@ -79,7 +79,7 @@ def put_review(review_id):
     error_404(result)
     args = request.get_json(silent=True)
     if not args:
-        abort(400, d"Not a JSON")
+        abort(400, "Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
