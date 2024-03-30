@@ -131,6 +131,7 @@ class TestUsers(unittest.TestCase):
         with app.app_context():
             response = self.app.post('/api/v1/users', json=[])
             self.assertEqual(response.status_code, 400)
+            print(response.json)
             self.assertEqual(response.json['message'], 'Not a JSON')
             response = self.app.post('/api/v1/users',
                                      json={'password': 'password3'})
