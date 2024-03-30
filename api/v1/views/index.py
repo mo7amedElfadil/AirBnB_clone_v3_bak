@@ -15,13 +15,13 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('/status', strict_slashes=False, methods=['GET'])
+@app_views.route('/status', methods=['GET'])
 def status():
     """Return status OK"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats', strict_slashes=False, methods=['GET'])
+@app_views.route('/stats', methods=['GET'])
 def stats():
     """Return stats"""
     return jsonify({"amenities": storage.count(Amenity),
