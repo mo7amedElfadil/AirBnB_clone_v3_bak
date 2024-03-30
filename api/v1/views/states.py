@@ -8,7 +8,7 @@ the default RESTful API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import abort, jsonify, request
 from models import storage
 from models.state import State
 
@@ -16,7 +16,7 @@ from models.state import State
 def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
-        abort(404, error="Not Found")
+        abort(404)
 
 
 @app_views.route('/states', strict_slashes=False,
@@ -25,18 +25,20 @@ def get_states():
     """Returns a list of states"""
     return [value.to_dict() for value in storage.all(State).values()]
 
+
 @app_views.route('/states', strict_slashes=False,
                  methods=['POST'])
 def post_states():
     """Adds a new instance of State into the dataset"""
     args = request.get_json()
     if not args:
-        abort(400, message="Not a JSON")
+        abort(400, description="Not a JSON")
     if not args.get('name'):
-        abort(400, message="Missing name")
+        abort(400, description="Missing name")
     new_state = State(**args)
     new_state.save()
     return new_state.to_dict(), 201
+
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
                  methods=['GET'])
@@ -66,7 +68,7 @@ def put_state(state_id):
     error_404(result)
     args = request.get_json()
     if not args:
-        abort(400, message="Not a JSON")
+        abort(400, description="Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
