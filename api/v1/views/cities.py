@@ -51,7 +51,7 @@ def put_city(city_id):
     try:
         args = request.get_json()
     except BadRequest as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(result, k, v)
@@ -75,9 +75,9 @@ def post_new_city(state_id):
     try:
         args = request.get_json()
     except BadRequest as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
     if not args.get('name'):
-        abort(400, description="Missing name")
+        abort(400, "Missing name")
     result = storage.get(State, state_id)
     error_404(result)
     args['state_id'] = state_id
