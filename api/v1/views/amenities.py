@@ -46,9 +46,8 @@ def put_amenity(amenity_id):
     """Updates an instance of the amenity entities"""
     result = storage.get(Amenity, amenity_id)
     error_404(result)
-    try:
-        args = request.get_json()
-    except BadRequest as e:
+    args = request.get_json(silent=True)
+    if not args:
         abort(400, description="Not a JSON")
     for k, v in args.items():
         if k not in ['id', 'created_at', 'updated_at']:
@@ -70,9 +69,8 @@ def get_all_amenities():
                  methods=['POST'])
 def post_new_amenity():
     """Adds a new instance of Amenity into the dataset"""
-    try:
-        args = request.get_json()
-    except BadRequest as e:
+    args = request.get_json(silent=True)
+    if not args:
         abort(400, description="Not a JSON")
     if not args.get('name'):
         abort(400, description="Missing name")
