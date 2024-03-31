@@ -2,11 +2,15 @@
 """Module defines BaseModel class"""
 
 from uuid import uuid4
+import models
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+if models.db == "db":
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:
@@ -29,13 +33,10 @@ class BaseModel:
 
     def save(self):
         """updates the public instance attribute updated_at"""
-        from models import storage, db
-        if db:
-            self.updated_at = datetime.utcnow()
-        else:
-            self.updated_at = datetime.now()
-        storage.new(self)
-        storage.save()
+
+        self.updated_at = datetime.utcnow()
+        models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
         """returns a dictionary containing all keys/values of __dict__
