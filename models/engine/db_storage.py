@@ -11,9 +11,9 @@ from models.place import Place
 from models.review import Review
 from models.amenity import Amenity
 
-env = ['HBNB_MYSQL_USER', 'HBNB_MYSQL_PWD',
-       'HBNB_MYSQL_HOST', 'HBNB_MYSQL_DB',
-       'HBNB_TYPE_STORAGE', 'HBNB_ENV']
+env = ["HBNB_MYSQL_USER", "HBNB_MYSQL_PWD",
+       "HBNB_MYSQL_HOST", "HBNB_MYSQL_DB",
+       "HBNB_TYPE_STORAGE", "HBNB_ENV"]
 
 classes = [User, State, City, Place, Review, Amenity]
 
@@ -42,13 +42,13 @@ class DBStorage:
         """
         MYSQL = {}
         for e in env:
-            MYSQL[e.split('_')[-1]] = getenv(e)
+            MYSQL[e.split("_")[-1]] = getenv(e)
         # dialect+driver://username:password@host:port/database
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                      .format(MYSQL['USER'], MYSQL['PWD'],
-                                              MYSQL['HOST'], MYSQL['DB']),
+        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}"
+                                      .format(MYSQL["USER"], MYSQL["PWD"],
+                                              MYSQL["HOST"], MYSQL["DB"]),
                                       pool_pre_ping=True)
-        if MYSQL['ENV'] == 'test':
+        if MYSQL["ENV"] == "test":
             Base.metadata.drop_all(self.__engine)
 
     def reload(self):
