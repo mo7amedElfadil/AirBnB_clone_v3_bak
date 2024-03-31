@@ -217,14 +217,7 @@ class HBNBCommand(cmd.Cmd):
                 storage.delete(obj_dict[key])
         storage.save()
 
-    def do_drop_all(self):
-        """Drops all instances of all classes"""
-        if db:
-            storage.drop_all()
-            storage.save()
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-    # if db:
-    #     storage.close()
+

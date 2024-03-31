@@ -96,22 +96,6 @@ class DBStorage:
         """
         self.__session.close()
 
-    def drop(self, cls=None):
-        """drop all tables
-        """
-        if cls:
-            self.__session.query(cls).delete()
-
-    def drop_all(self):
-        """drop all tables
-        """
-        Base.metadata.drop_all(self.__engine)
-
-    def rollback(self):
-        """rollback all changes
-        """
-        self.__session.rollback()
-
     def get(self, cls, id):
         """get an object by class and id
         """

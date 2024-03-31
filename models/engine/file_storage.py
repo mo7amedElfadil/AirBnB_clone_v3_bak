@@ -2,7 +2,13 @@
 """This Module defines file storage class"""
 
 from json import loads, dumps
-
+from models.base_model import BaseModel
+from models.user import User
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 
 class FileStorage:
     """ FileStorage class.
@@ -41,14 +47,6 @@ class FileStorage:
         """Deserializes the JSON file to __objects"""
         try:
             with open(self.__file_path, "r", encoding="utf-8") as file:
-                from models.base_model import BaseModel
-                from models.user import User
-                from models.amenity import Amenity
-                from models.city import City
-                from models.place import Place
-                from models.review import Review
-                from models.state import State
-
                 cls = {
                     "BaseModel": BaseModel, "User": User,
                     "Amenity": Amenity, "City": City,
