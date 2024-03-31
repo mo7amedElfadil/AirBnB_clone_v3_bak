@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
 Flask web api
+methods: GET, POST, PUT, DELETE
 """
 from os import getenv
 from flask import Flask
@@ -21,7 +22,7 @@ def close_storage(_):
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found(_):
     """Return 404 error"""
     return {"error": "Not found"}, 404
 
