@@ -27,13 +27,13 @@ def error_404(result):
 
 @app_views.route("/places/<place_id>/amenities", strict_slashes=False,
                  methods=["GET"])
-def get_amenities(place_id):
+def get_place_amenities(place_id):
     """Returns a list of amenities for a certain place"""
     place = storage.get(Place, place_id)
     error_404(place)
 
     # Checking if amenity is linked to place according to storage
-    if getenv("HBNB_TYPE_STORAGE"] == "db":
+    if getenv("HBNB_TYPE_STORAGE") == "db":
         return jsonify([value.to_dict() for value in place.amenities])
     else:
         return jsonify([storage.get(Amenity, id_).to_dict()
@@ -42,7 +42,7 @@ def get_amenities(place_id):
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=False, methods=["DELETE"])
-def delete_amenity(place_id, amenity_id):
+def delete_place_amenity(place_id, amenity_id):
     """Delete an amenity object that is linked to a certain place"""
     place = storage.get(Place, place_id)
     error_404(place)
@@ -50,7 +50,7 @@ def delete_amenity(place_id, amenity_id):
     error_404(amenity)
 
     # Checking if amenity is linked to place according to storage
-    if getenv("HBNB_TYPE_STORAGE"] == "db":
+    if getenv("HBNB_TYPE_STORAGE") == "db":
         if amenity not in place.amenities:
             abort(404)
         place.amenities.remove(amenity)
@@ -65,7 +65,7 @@ def delete_amenity(place_id, amenity_id):
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  strict_slashes=False, methods=["POST"])
-def add_amenity(place_id, amenity_id):
+def add_place_amenity(place_id, amenity_id):
     """Adds a new amenity object to a place"""
     place = storage.get(Place, place_id)
     error_404(place)
@@ -73,11 +73,10 @@ def add_amenity(place_id, amenity_id):
     error_404(amenity)
 
     # Checking if amenity is linked to place according to storage
-    if getenv("HBNB_TYPE_STORAGE"] == "db":
+    if getenv("HBNB_TYPE_STORAGE") == "db":
         if amenity in place.amenities:
             return jsonify(amenity.to_dict()), 200
         place.amenities.append(amenity)
-
 
     else:
         if amenity_id in place.amenity_ids:
