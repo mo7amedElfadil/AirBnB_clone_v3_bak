@@ -27,7 +27,6 @@ def get_amenity(amenity_id):
     error_404(result)
     return jsonify(result.to_dict())
 
-
 @app_views.route('/amenities/<amenity_id>', strict_slashes=False,
                  methods=['DELETE'])
 def delete_amenity(amenity_id):
@@ -37,7 +36,6 @@ def delete_amenity(amenity_id):
     storage.delete(result)
     storage.save()
     return jsonify({}), 200
-
 
 @app_views.route('/amenities/<amenity_id>', strict_slashes=False,
                  methods=['PUT'])
@@ -60,7 +58,6 @@ def put_amenity(amenity_id):
 def get_all_amenities():
     """Returns a list of all amenities"""
     result = storage.all(Amenity)
-    error_404(result)
     return jsonify([value.to_dict() for value in result.values()])
 
 

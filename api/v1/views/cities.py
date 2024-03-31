@@ -52,7 +52,7 @@ def put_city(city_id):
     if not args:
         abort(400, "Not a JSON")
     for k, v in args.items():
-        if k not in ['id', 'created_at', 'updated_at']:
+        if k not in ['id', 'state_id', 'created_at', 'updated_at']:
             setattr(result, k, v)
     result.save()
     return jsonify(result.to_dict()), 200

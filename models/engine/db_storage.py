@@ -43,7 +43,6 @@ class DBStorage:
         MYSQL = {}
         for e in env:
             MYSQL[e.split('_')[-1]] = getenv(e)
-        # dialect+driver://username:password@host:port/database
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
                                       .format(MYSQL['USER'], MYSQL['PWD'],
                                               MYSQL['HOST'], MYSQL['DB']),

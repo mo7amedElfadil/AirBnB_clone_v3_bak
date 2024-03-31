@@ -1,28 +1,36 @@
 #!/usr/bin/python3
-'''Module defines `User` class'''
-
-from models.base_model import BaseModel, Base, store
-from sqlalchemy.orm import relationship
+""" holds class User"""
+from hashlib import md5
+import models
+from models.base_model import BaseModel, Base
+from os import getenv
+import sqlalchemy
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
-@store('reviews', 'places',
-       email=(Column(String(128), nullable=False), ''),
-       password=(Column(String(128), nullable=False), ''),
-       first_name=(Column(String(128)), ''),
-       last_name=(Column(String(128)), ''),
-       reviews=(relationship('Review', backref='user',
-                             cascade='all, delete-orphan'), ),
-       places=(relationship('Place', backref='user',
-                            cascade='all, delete-orphan'), )
-       )
 class User(BaseModel, Base):
-    '''User class.
-
-    Atrrs:
-        email(str):
-        password(str):
-        first_name(str):
-        last_name(str):
-    '''
+    """Representation of a user """
     __tablename__ = 'users'
+    if models.db:
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128), nullable=True)
+        last_name = Column(String(128), nullable=True)
+        places = relationship("Place", backref="user",
+                              cascade='all, delete-orphan')
+        reviews = relationship("Review", backref="user",
+                               cascade='all, delete-orphan')
+    else:
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
+        if 'password' in kwargs:
+            pwd = md5()
+            pwd.update(kwargs['password'].encode())
+            self.password = pwd.hexdigest()
