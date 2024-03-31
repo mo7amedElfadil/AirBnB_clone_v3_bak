@@ -5,6 +5,7 @@ the default RESTful API actions
 
     /status: returns the status of the API
     /stats: returns the staticstis of the different entities
+
 """
 
 from api.v1.views import app_views
@@ -17,30 +18,6 @@ def error_404(result):
     """Defining how to process a result that is None"""
     if not result:
         abort(404)
-
-
-@app_views.route("/users", strict_slashes=False,
-                 methods=["GET"])
-def get_users():
-    """Returns a list of users"""
-    return jsonify([value.to_dict() for value in
-                    storage.all(User).values()])
-
-
-@app_views.route("/users", strict_slashes=False,
-                 methods=["POST"])
-def post_user():
-    """Adds a new instance of User into the dataset"""
-    args = request.get_json(silent=True)
-    if not args:
-        abort(400, "Not a JSON")
-    if not args.get("email"):
-        abort(400, "Missing email")
-    if not args.get("password"):
-        abort(400, "Missing password")
-    new_user = User(**args)
-    new_user.save()
-    return jsonify(new_user.to_dict()), 201
 
 
 @app_views.route("/users/<user_id>", strict_slashes=False,
@@ -77,3 +54,27 @@ def put_user(user_id):
             setattr(result, k, v)
     result.save()
     return jsonify(result.to_dict()), 200
+
+
+@app_views.route("/users", strict_slashes=False,
+                 methods=["GET"])
+def get_users():
+    """Returns a list of users"""
+    return jsonify([value.to_dict() for value in
+                    storage.all(User).values()])
+
+
+@app_views.route("/users", strict_slashes=False,
+                 methods=["POST"])
+def post_new_user():
+    """Adds a new instance of User into the dataset"""
+    args = request.get_json(silent=True)
+    if not args:
+        abort(400, "Not a JSON")
+    if not args.get("email"):
+        abort(400, "Missing email")
+    if not args.get("password"):
+        abort(400, "Missing password")
+    new_user = User(**args)
+    new_user.save()
+    return jsonify(new_user.to_dict()), 201
