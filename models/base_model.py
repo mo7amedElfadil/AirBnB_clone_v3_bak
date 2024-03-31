@@ -7,7 +7,7 @@ from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-if models.db == "db":
+if models.db:
     Base = declarative_base()
 else:
     Base = object
@@ -53,36 +53,9 @@ class BaseModel:
 
     def delete(self):
         """deletes the current instance from the storage"""
-        from models import storage
-        storage.delete(self)
+        models.storage.delete(self)
 
     def __str__(self):
         """Instance representaion"""
         return "[{}] ({}) {}".format(self.__class__.__name__,
                                      self.id, self.__dict__)
-
-
-def store(*args, **kw):
-    """Decorator to set class attributes base on
-    storage type.
-
-    Args:
-        args: positional arguments represnent fields to skip
-            when it"s file storage.
-        kw: named arguments represents class attrs
-
-    Returns:
-        decorated class.
-    """
-    from os import getenv
-
-    db = (False, True)["db" == getenv("HBNB_TYPE_STORAGE")]
-
-    def decorate(cls):
-        for k, v in kw.items():
-            if not db and k in args:
-                continue
-            setattr(cls, k, v[0] if db else v[1])
-        return cls
-
-    return decorate
