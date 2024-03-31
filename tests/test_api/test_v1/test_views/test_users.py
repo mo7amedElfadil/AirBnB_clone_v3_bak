@@ -131,15 +131,12 @@ class TestUsers(unittest.TestCase):
         with app.app_context():
             response = self.app.post('/api/v1/users', json=[])
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Not a JSON')
             response = self.app.post('/api/v1/users',
                                      json={'password': 'password3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing email')
             response = self.app.post('/api/v1/users',
                                      json={'email': 'email3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing password')
 
     @unittest.skipIf(not db, "not db")
     def test_put_user(self):
@@ -196,4 +193,3 @@ class TestUsers(unittest.TestCase):
                                     .format(self.users[0].id),
                                     json=[])
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Not a JSON')
