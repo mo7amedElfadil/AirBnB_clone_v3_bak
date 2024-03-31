@@ -13,7 +13,6 @@ from flask import abort, jsonify, request
 from models import storage
 from models.city import City
 from models.state import State
-from werkzeug.exceptions import BadRequest
 
 
 def error_404(result):
