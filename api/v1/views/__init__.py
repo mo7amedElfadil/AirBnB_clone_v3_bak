@@ -14,3 +14,4 @@ from api.v1.views.states import *  # noqa: E402
 from api.v1.views.users import *  # noqa: E402
 from api.v1.views.places import *  # noqa: E402
 from api.v1.views.places_reviews import *  # noqa: E402
+from api.v1.views.places_amenities import *  #noqa: E402
