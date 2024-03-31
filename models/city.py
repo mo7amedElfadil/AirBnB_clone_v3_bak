@@ -1,23 +1,24 @@
 #!/usr/bin/python3
-'''Module defines City'''
+"""Module defines City"""
 
 from models.base_model import BaseModel, Base, store
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+import models
 
 
-@store('places',
-       name=(Column(String(128), nullable=False), ''),
-       state_id=(Column(String(60), ForeignKey('states.id'),
-                        nullable=False), ''),
-       places=(relationship('Place', backref='cities',
-                            cascade='all, delete-orphan'), )
-       )
 class City(BaseModel, Base):
-    '''City class.
-
-    Atrrs:
-        state_id(str):
-        name(str):
-    '''
+    """Representation of city """
     __tablename__ = 'cities'
+    if models.db:
+        state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
+        name = Column(String(128), nullable=False)
+        places = relationship("Place", backref="cities",
+                              cascade='all, delete-orphan')
+    else:
+        state_id = ""
+        name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes city"""
+        super().__init__(*args, **kwargs)

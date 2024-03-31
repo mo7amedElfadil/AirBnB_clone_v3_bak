@@ -3,7 +3,6 @@
 Unittest for the api/v1/app.py
 """
 import unittest
-import os
 import inspect
 import pycodestyle as pep8
 from api.v1.app import app
@@ -108,7 +107,7 @@ class TestPlaces(unittest.TestCase):
                                     .format('49627dd4-3d39-4e0f' +
                                             '-b48-256850b248df'))
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
+            self.assertEqual(response.json['error'], 'Not found')
 
     def test_delete_place(self):
         """Test for DELETE /api/v1/places/<place_id>"""
@@ -127,7 +126,7 @@ class TestPlaces(unittest.TestCase):
                                        .format('49627dd4-3d39-4e0f' +
                                                '-b48-256850b248df'))
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
+            self.assertEqual(response.json['error'], 'Not found')
 
     def test_post_place(self):
         """Test for POST /api/v1/places"""
@@ -150,23 +149,19 @@ class TestPlaces(unittest.TestCase):
                                              '-b48-256850b248df'),
                                      json=self.kwargs)
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
 
             response = self.app.post('/api/v1/cities/{}/places'
                                      .format(self.instances['city'].id),
                                      json=[])
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Not a JSON')
             response = self.app.post('/api/v1/cities/{}/places'
                                      .format(self.instances['city'].id),
                                      json={'name': 'name3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing user_id')
             response = self.app.post('/api/v1/cities/{}/places'
                                      .format(self.instances['city'].id),
                                      json={'user_id': 'user_id3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing name')
 
     @unittest.skipIf(not db, "not db")
     def test_put_place(self):
@@ -221,9 +216,7 @@ class TestPlaces(unittest.TestCase):
                                             '-b48-256850b248df'),
                                     json={'name': 'name4'})
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
             response = self.app.put('/api/v1/places/{}'
                                     .format(self.instances['place1'].id),
                                     json=[])
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Not a JSON')

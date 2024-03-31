@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
 Flask web api
+methods: GET, POST, PUT, DELETE
 """
 from os import getenv
 from flask import Flask
@@ -21,12 +22,12 @@ def close_storage(_):
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found(_):
     """Return 404 error"""
     return {"error": "Not found"}, 404
 
 
 if __name__ == "__main__":
-    app.run(host=getenv('HBNB_API_HOST', '0.0.0.0'),
-            port=int(getenv('HBNB_API_PORT', 5000)),
+    app.run(host=getenv("HBNB_API_HOST", "0.0.0.0"),
+            port=int(getenv("HBNB_API_PORT", 5000)),
             threaded=True)

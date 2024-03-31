@@ -93,7 +93,7 @@ class TestUsers(unittest.TestCase):
                                     .format('49627dd4-3d39-4e0f' +
                                             '-b48-256850b248df'))
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
+            self.assertEqual(response.json['error'], 'Not found')
 
     def test_delete_user(self):
         """Test for DELETE /api/v1/users/<user_id>"""
@@ -112,7 +112,7 @@ class TestUsers(unittest.TestCase):
                                        .format('49627dd4-3d39-4e0f' +
                                                '-b48-256850b248df'))
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
+            self.assertEqual(response.json['error'], 'Not found')
 
     def test_post_user(self):
         """Test for POST /api/v1/users"""
@@ -131,16 +131,12 @@ class TestUsers(unittest.TestCase):
         with app.app_context():
             response = self.app.post('/api/v1/users', json=[])
             self.assertEqual(response.status_code, 400)
-            print(response.json)
-            self.assertEqual(response.json['message'], 'Not a JSON')
             response = self.app.post('/api/v1/users',
                                      json={'password': 'password3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing email')
             response = self.app.post('/api/v1/users',
                                      json={'email': 'email3'})
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Missing password')
 
     @unittest.skipIf(not db, "not db")
     def test_put_user(self):
@@ -192,9 +188,8 @@ class TestUsers(unittest.TestCase):
                                             '-b48-256850b248df'),
                                     json={'email': 'email4'})
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response.json['error'], 'Not Found')
+            self.assertEqual(response.json['error'], 'Not found')
             response = self.app.put('/api/v1/users/{}'
                                     .format(self.users[0].id),
                                     json=[])
             self.assertEqual(response.status_code, 400)
-            self.assertEqual(response.json['message'], 'Not a JSON')

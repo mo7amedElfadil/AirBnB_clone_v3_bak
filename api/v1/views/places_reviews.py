@@ -22,8 +22,8 @@ def error_404(result):
         abort(404)
 
 
-@app_views.route('places/<place_id>/reviews', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("places/<place_id>/reviews", strict_slashes=False,
+                 methods=["GET"])
 def get_reviews(place_id):
     """Returns a list of reviews for a certain place"""
     result = storage.get(Place, place_id)
@@ -31,8 +31,8 @@ def get_reviews(place_id):
     return jsonify([value.to_dict() for value in result.values()])
 
 
-@app_views.route('/reviews/<review_id>', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("/reviews/<review_id>", strict_slashes=False,
+                 methods=["GET"])
 def get_review(review_id):
     """Returns a review with the specific state id"""
     result = storage.get(Review, review_id)
@@ -40,8 +40,8 @@ def get_review(review_id):
     return jsonify(result.to_dict())
 
 
-@app_views.route('/reviews/<review_id>', strict_slashes=False,
-                 methods=['DELETE'])
+@app_views.route("/reviews/<review_id>", strict_slashes=False,
+                 methods=["DELETE"])
 def delete_review(review_id):
     """Deletes an instance of review with the specific id"""
     result = storage.get(Review, review_id)
@@ -51,8 +51,8 @@ def delete_review(review_id):
     return jsonify({}), 200
 
 
-@app_views.route('/places/<place_id>/reviews', strict_slashes=False,
-                 methods=['POST'])
+@app_views.route("/places/<place_id>/reviews", strict_slashes=False,
+                 methods=["POST"])
 def post_new_review(place_id):
     """Adds a new instance of Review into the dataset"""
     result = storage.get(Place, place_id)
@@ -62,7 +62,7 @@ def post_new_review(place_id):
         abort(400, "Not a JSON")
     if not args.get("user_id"):
         abort(400, "Missing user_id")
-    if not storage.get(User, args['user_id']):
+    if not storage.get(User, args["user_id"]):
         abort(404)
     if not args.get("text"):
         abort(400, "Missing text")
@@ -71,8 +71,8 @@ def post_new_review(place_id):
     return jsonify(new_review.to_dict()), 201
 
 
-@app_views.route('/reviews/<review_id>', strict_slashes=False,
-                 methods=['PUT'])
+@app_views.route("/reviews/<review_id>", strict_slashes=False,
+                 methods=["PUT"])
 def put_review(review_id):
     """Updates an instance of the review entities"""
     result = storage.get(Review, review_id)
@@ -81,7 +81,7 @@ def put_review(review_id):
     if not args:
         abort(400, "Not a JSON")
     for k, v in args.items():
-        if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if k not in ["id", "created_at", "updated_at"]:
             setattr(result, k, v)
     result.save()
     return jsonify(result.to_dict()), 200

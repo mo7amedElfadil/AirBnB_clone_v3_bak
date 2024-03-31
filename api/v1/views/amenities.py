@@ -19,16 +19,17 @@ def error_404(result):
         abort(404)
 
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("/amenities/<amenity_id>", strict_slashes=False,
+                 methods=["GET"])
 def get_amenity(amenity_id):
     """Returns an instance of amenity"""
     result = storage.get(Amenity, amenity_id)
     error_404(result)
     return jsonify(result.to_dict())
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
-                 methods=['DELETE'])
+
+@app_views.route("/amenities/<amenity_id>", strict_slashes=False,
+                 methods=["DELETE"])
 def delete_amenity(amenity_id):
     """Deletes an instance of amenity with the specific id"""
     result = storage.get(Amenity, amenity_id)
@@ -37,8 +38,9 @@ def delete_amenity(amenity_id):
     storage.save()
     return jsonify({}), 200
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False,
-                 methods=['PUT'])
+
+@app_views.route("/amenities/<amenity_id>", strict_slashes=False,
+                 methods=["PUT"])
 def put_amenity(amenity_id):
     """Updates an instance of the amenity entities"""
     result = storage.get(Amenity, amenity_id)
@@ -47,28 +49,28 @@ def put_amenity(amenity_id):
     if not args:
         abort(400, "Not a JSON")
     for k, v in args.items():
-        if k not in ['id', 'created_at', 'updated_at']:
+        if k not in ["id", "created_at", "updated_at"]:
             setattr(result, k, v)
     result.save()
     return jsonify(result.to_dict()), 200
 
 
-@app_views.route('/amenities', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("/amenities", strict_slashes=False,
+                 methods=["GET"])
 def get_all_amenities():
     """Returns a list of all amenities"""
     result = storage.all(Amenity)
     return jsonify([value.to_dict() for value in result.values()])
 
 
-@app_views.route('/amenities', strict_slashes=False,
-                 methods=['POST'])
+@app_views.route("/amenities", strict_slashes=False,
+                 methods=["POST"])
 def post_new_amenity():
     """Adds a new instance of Amenity into the dataset"""
     args = request.get_json(silent=True)
     if not args:
         abort(400, "Not a JSON")
-    if not args.get('name'):
+    if not args.get("name"):
         abort(400, "Missing name")
     new_amenity = Amenity(**args)
     new_amenity.save()

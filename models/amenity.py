@@ -1,21 +1,18 @@
 #!/usr/bin/python3
-'''Module defines Amenity'''
+"""Module defines Amenity"""
 
-from sqlalchemy.orm import relationship
-from models.base_model import BaseModel, Base, store
+from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
+import models
 
-
-@store('place_amenities',
-       name=(Column(String(128), nullable=False), ''),
-       place_amenities=(relationship("Place",
-                        secondary="place_amenity",
-                        back_populates="amenities"),)
-       )
 class Amenity(BaseModel, Base):
-    '''Amenity class.
-
-    Atrrs:
-        name: string
-    '''
+    """Representation of Amenity """
     __tablename__ = 'amenities'
+    if models.db:
+        name = Column(String(128), nullable=False)
+    else:
+        name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes Amenity"""
+        super().__init__(*args, **kwargs)

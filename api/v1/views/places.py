@@ -21,8 +21,8 @@ def error_404(result):
         abort(404)
 
 
-@app_views.route('/places/<place_id>', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("/places/<place_id>", strict_slashes=False,
+                 methods=["GET"])
 def get_place(place_id):
     """Returns an instance of place"""
     result = storage.get(Place, place_id)
@@ -30,8 +30,8 @@ def get_place(place_id):
     return jsonify(result.to_dict())
 
 
-@app_views.route('/places/<place_id>', strict_slashes=False,
-                 methods=['DELETE'])
+@app_views.route("/places/<place_id>", strict_slashes=False,
+                 methods=["DELETE"])
 def delete_place(place_id):
     """Deletes an instance of place with the specific id"""
     result = storage.get(Place, place_id)
@@ -41,9 +41,9 @@ def delete_place(place_id):
     return jsonify({}), 200
 
 
-@app_views.route('/places/<place_id>', strict_slashes=False,
-                 methods=['PUT'])
-def put_place(self, place_id):
+@app_views.route("/places/<place_id>", strict_slashes=False,
+                 methods=["PUT"])
+def put_place(place_id):
     """Updates an instance of the place entities"""
     result = storage.get(Place, place_id)
     error_404(result)
@@ -51,15 +51,15 @@ def put_place(self, place_id):
     if not args:
         abort(400, description="Not a JSON")
     for k, v in args.items():
-        if k not in ['id', 'user_id', 'city_id',
-                     'created_at', 'updated_at']:
+        if k not in ["id", "user_id", "city_id",
+                     "created_at", "updated_at"]:
             setattr(result, k, v)
     result.save()
     return jsonify(result.to_dict()), 200
 
 
-@app_views.route('/citys/<city_id>/places', strict_slashes=False,
-                 methods=['GET'])
+@app_views.route("/cities/<city_id>/places", strict_slashes=False,
+                 methods=["GET"])
 def get_places(city_id):
     """Returns a list of places with the specific city id"""
     result = storage.get(City, city_id)
@@ -67,20 +67,20 @@ def get_places(city_id):
     return jsonify([value.to_dict() for value in result.places])
 
 
-@app_views.route('/citys/<city_id>/places', strict_slashes=False,
-                 methods=['POST'])
+@app_views.route("/cities/<city_id>/places", strict_slashes=False,
+                 methods=["POST"])
 def post_place(city_id):
     """Adds a new instance of Place into the dataset"""
+    result = storage.get(City, city_id)
+    error_404(result)
     args = request.get_json(silent=True)
     if not args:
         abort(400, description="Not a JSON")
-    if not args.get('user_id'):
+    if not args.get("user_id"):
         abort(400, description="Missing user_id")
-    if not args.get('name'):
+    if not args.get("name"):
         abort(400, description="Missing name")
-    result = storage.get(City, city_id)
-    error_404(result)
-    args['city_id'] = city_id
+    args["city_id"] = city_id
     new_place = Place(**args)
     new_place.save()
     return jsonify(new_place.to_dict()), 201
