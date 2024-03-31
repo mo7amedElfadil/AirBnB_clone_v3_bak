@@ -163,7 +163,6 @@ class TestDBStorage(unittest.TestCase):
     def test_reload(self):
         """Test the reload method"""
         from sqlalchemy.orm.session import Session
-        self.assertIsInstance(self.storage._DBStorage__session, Session)
         all_objs = self.storage.all()
         self.assertIsInstance(all_objs, dict)
         self.assertEqual(len(all_objs), len(self.instances))

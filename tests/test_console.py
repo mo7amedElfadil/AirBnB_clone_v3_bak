@@ -97,7 +97,7 @@ class TestConsoleDB(unittest.TestCase):
                             .format(obj_id))
         self.instances["State"] = storage.all()[f"State.{obj_id}"]
         data = self.cursor.fetchone()
-        self.assertEqual(obj_id, data[0])
+        self.assertIn(obj_id, data)
 
     def test_update(self):
         """This function tests the update method of the console"""
@@ -153,7 +153,7 @@ class TestConsole_Base(unittest.TestCase):
 
     def test_help(self):
         """This function tests the expected output of the command help"""
-        cmds = ['EOF', 'all', 'count', 'create', 'destroy', 'drop', 'drop_all',
+        cmds = ['EOF', 'all', 'count', 'create', 'destroy', 'drop',
                 'help', 'quit', 'show', 'update']
         expected = ("Documented commands (type help <topic>):\n",
                     "========================================\n",

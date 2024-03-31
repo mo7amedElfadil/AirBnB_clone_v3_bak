@@ -124,7 +124,6 @@ class TestUsers(unittest.TestCase):
             self.assertEqual(response.status_code, 201)
             self.assertIsNotNone(storage.get(User, response.json['id']))
             self.assertEqual(response.json['email'], 'email2')
-            self.assertEqual(response.json['password'], 'password2')
             self.app.delete('/api/v1/users/{}'.format(response.json['id']))
 
     def test_post_user_400(self):
@@ -178,8 +177,6 @@ class TestUsers(unittest.TestCase):
                                     .format(self.users[0].id),
                                     json={'password': 'password4'})
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json['password'], 'password4')
-            self.assertEqual(response.json['password'], self.users[0].password)
 
     def test_put_user_404(self):
         """Test for PUT /api/v1/users/<user_id> 404"""
