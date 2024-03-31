@@ -21,6 +21,7 @@ import MySQLdb
 class TestBaseModelDocPep8(unittest.TestCase):
     """unittest class for FileStorage class
     documentation and pep8 conformaty"""
+
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide()
@@ -67,6 +68,7 @@ def create_cursor():
 @unittest.skipIf(not db, "db")
 class TestDBStorage(unittest.TestCase):
     """Test for the DBStorage class"""
+
     def setUp(self):
         self.storage = storage
         self.instances = {}

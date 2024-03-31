@@ -31,9 +31,9 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
     cls = {
-            "BaseModel": BaseModel, "User": User, "State": State,
-            "City": City, "Amenity": Amenity, "Place": Place, "Review": Review
-          }
+        "BaseModel": BaseModel, "User": User, "State": State,
+        "City": City, "Amenity": Amenity, "Place": Place, "Review": Review
+    }
 
     def precmd(self, line):
         """This function intervenes and rewrites the command or simply

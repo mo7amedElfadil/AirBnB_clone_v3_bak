@@ -19,6 +19,7 @@ from models import storage
 
 class TestReviewDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
+
     def test_pep8_review(self) -> None:
         """Test that the review_module conforms to PEP8."""
         style = pep8.StyleGuide(quiet=True)
@@ -55,6 +56,7 @@ class TestReviewDocPep8(unittest.TestCase):
 @unittest.skipIf(db, "not db")
 class Test_Review(unittest.TestCase):
     '''Test Review class'''
+
     def test_docstr(self):
         '''Test class documentaion'''
         self.assertTrue(len(Review.__doc__) > 2)
@@ -92,9 +94,9 @@ class Test_Review(unittest.TestCase):
     def test_kwargs(self):
         '''Test named arguments'''
         kw = {
-                'id': 1, 'created_at': datetime.datetime.now(),
-                'updated_at': datetime.datetime.now()
-             }
+            'id': 1, 'created_at': datetime.datetime.now(),
+            'updated_at': datetime.datetime.now()
+        }
         with self.assertRaises(TypeError):
             Review(**kw)
         kw['created_at'] = datetime.datetime.now().isoformat()

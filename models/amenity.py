@@ -4,6 +4,7 @@
 from models.base_model import BaseModel, Base, db
 from sqlalchemy import Column, String
 
+
 class Amenity(BaseModel, Base):
     """Representation of Amenity """
     __tablename__ = 'amenities'

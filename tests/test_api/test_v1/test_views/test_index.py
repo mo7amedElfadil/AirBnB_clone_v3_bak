@@ -21,6 +21,7 @@ from models.amenity import Amenity
 class TestIndexDocPep8(unittest.TestCase):
     """unittest class for FileStorage class
     documentation and pep8 conformaty"""
+
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide()

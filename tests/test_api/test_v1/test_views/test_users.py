@@ -18,6 +18,7 @@ from json import loads
 class TestUsersDocPep8(unittest.TestCase):
     """unittest class for users module
     documentation and pep8 conformaty"""
+
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide()
