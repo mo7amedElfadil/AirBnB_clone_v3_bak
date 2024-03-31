@@ -16,6 +16,7 @@ from models import storage
 
 class TestAmenityDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
+
     def test_pep8_amenity(self) -> None:
         """Test that the amenity_module conforms to PEP8."""
         style = pep8.StyleGuide()

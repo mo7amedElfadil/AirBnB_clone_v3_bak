@@ -16,6 +16,7 @@ from models import db
 
 class TestStateDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
+
     def test_pep8_state(self) -> None:
         """Test that the state_module conforms to PEP8."""
         style = pep8.StyleGuide()
@@ -148,6 +149,7 @@ class Test_instantation(unittest.TestCase):
 @unittest.skipIf(db, "not db")
 class Test_save(unittest.TestCase):
     """This class tests the instance method save(self)"""
+
     def test_save(self):
         """This function tests updating the time"""
         if models.db == 'db':

@@ -20,6 +20,7 @@ from json import loads
 class TestPlacesDocPep8(unittest.TestCase):
     """unittest class for states module
     documentation and pep8 conformaty"""
+
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide()
@@ -34,6 +35,7 @@ class TestPlacesDocPep8(unittest.TestCase):
                                     'test_states.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
+
 
 class TestStates(unittest.TestCase):
     """unittest class for states.py"""

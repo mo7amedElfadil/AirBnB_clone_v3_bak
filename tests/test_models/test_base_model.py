@@ -16,6 +16,7 @@ from models import db
 
 class TestBaseModelDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
+
     def test_pep8_base(self) -> None:
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide()

@@ -50,11 +50,11 @@ class FileStorage:
                 from models.state import State
 
                 cls = {
-                        "BaseModel": BaseModel, "User": User,
-                        "Amenity": Amenity, "City": City,
-                        "Place": Place, "Review": Review,
-                        "State": State
-                      }
+                    "BaseModel": BaseModel, "User": User,
+                    "Amenity": Amenity, "City": City,
+                    "Place": Place, "Review": Review,
+                    "State": State
+                }
                 for k, v in loads(file.read()).items():
                     self.__objects[k] = cls[v["__class__"]](**v)
         except Exception:

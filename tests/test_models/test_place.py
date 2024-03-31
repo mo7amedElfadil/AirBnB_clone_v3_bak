@@ -19,6 +19,7 @@ from models import storage
 
 class TestPlaceDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
+
     def test_pep8_place(self) -> None:
         """Test that the place_module conforms to PEP8."""
         style = pep8.StyleGuide()
@@ -55,6 +56,7 @@ class TestPlaceDocPep8(unittest.TestCase):
 @unittest.skipIf(db, "not db")
 class Test_Place(unittest.TestCase):
     '''Test Place class'''
+
     def test_docstr(self):
         '''Test class documentaion'''
         self.assertTrue(len(Place.__doc__) > 2)
@@ -107,9 +109,9 @@ class Test_Place(unittest.TestCase):
     def test_kwargs(self):
         '''Test named arguments'''
         kw = {
-                'id': 1, 'created_at': datetime.datetime.now(),
-                'updated_at': datetime.datetime.now(),
-             }
+            'id': 1, 'created_at': datetime.datetime.now(),
+            'updated_at': datetime.datetime.now(),
+        }
         # invalid date format
         with self.assertRaises(TypeError):
             Place(**kw)

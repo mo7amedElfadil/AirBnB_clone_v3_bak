@@ -5,6 +5,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 import models
 
+
 class Amenity(BaseModel, Base):
     """Representation of Amenity """
     __tablename__ = 'amenities'
