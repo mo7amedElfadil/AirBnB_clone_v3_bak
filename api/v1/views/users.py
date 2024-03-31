@@ -33,11 +33,11 @@ def post_user():
     """Adds a new instance of User into the dataset"""
     args = request.get_json(silent=True)
     if not args:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
     if not args.get("email"):
-        abort(400, description="Missing email")
+        abort(400, "Missing email")
     if not args.get("password"):
-        abort(400, description="Missing password")
+        abort(400, "Missing password")
     new_user = User(**args)
     new_user.save()
     return jsonify(new_user.to_dict()), 201

@@ -43,7 +43,7 @@ def delete_place(place_id):
 
 @app_views.route("/places/<place_id>", strict_slashes=False,
                  methods=["PUT"])
-def put_place(self, place_id):
+def put_place(place_id):
     """Updates an instance of the place entities"""
     result = storage.get(Place, place_id)
     error_404(result)
