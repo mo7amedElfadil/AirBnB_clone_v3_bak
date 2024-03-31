@@ -58,7 +58,7 @@ def put_place(place_id):
     return jsonify(result.to_dict()), 200
 
 
-@app_views.route("/citys/<city_id>/places", strict_slashes=False,
+@app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=["GET"])
 def get_places(city_id):
     """Returns a list of places with the specific city id"""
@@ -67,10 +67,12 @@ def get_places(city_id):
     return jsonify([value.to_dict() for value in result.places])
 
 
-@app_views.route("/citys/<city_id>/places", strict_slashes=False,
+@app_views.route("/cities/<city_id>/places", strict_slashes=False,
                  methods=["POST"])
 def post_place(city_id):
     """Adds a new instance of Place into the dataset"""
+    result = storage.get(City, city_id)
+    error_404(result)
     args = request.get_json(silent=True)
     if not args:
         abort(400, description="Not a JSON")
@@ -78,8 +80,6 @@ def post_place(city_id):
         abort(400, description="Missing user_id")
     if not args.get("name"):
         abort(400, description="Missing name")
-    result = storage.get(City, city_id)
-    error_404(result)
     args["city_id"] = city_id
     new_place = Place(**args)
     new_place.save()

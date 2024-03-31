@@ -135,6 +135,7 @@ class TestPlaces(unittest.TestCase):
             response = self.app.post('/api/v1/cities/{}/places'
                                      .format(self.instances['city'].id),
                                      json=self.kwargs)
+            print(self.instances['city'].id)
             self.assertEqual(response.status_code, 201)
             self.assertIsNotNone(storage.get(Place, response.json['id']))
             self.assertEqual(response.json['name'], self.kwargs['name'])
